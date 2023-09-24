@@ -60,8 +60,6 @@ public class AutoFileAspect {
                 Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
                 Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
                 Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-
-
                 //通过反射为对象属性赋值
                 setCreateUser.invoke(entity,currentId);
                 setCreateTime.invoke(entity,now);

@@ -44,7 +44,6 @@ public class DishServiceImpl implements DishService {
         //向菜单表插入一条数据
         dishMapper.insert(dish);
 
-
         //获取insert生成的主键值
         Long dishId = dish.getId();
 
@@ -63,7 +62,6 @@ public class DishServiceImpl implements DishService {
      * @return
      */
 
-    @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO){
         PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
         Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
@@ -75,24 +73,28 @@ public class DishServiceImpl implements DishService {
      * 修改菜品
      * @param dishDTO
      */
-    @Override
-    public void update(DishDTO dishDTO) {
+    public void updateWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO,dish);
+        //修改菜品表基本信息
         dishMapper.update(dish);
-        if (dishDTO.getFlavors() != null){
-            DishFlavor dishFlavor = DishFlavor.builder()
-                    .dishId(dishDTO.getId())
-                    .name(dishDTO.getName())
-                    .build();
-            dishFlavorMapper.update();
+        //删除原有的口味数据
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+
+        //重新插入口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0){
+            flavors.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishDTO.getId());
+            });
+            //向口味表插入n条数据
+            dishFlavorMapper.insertBatch(flavors);
         }
     }
     /**
      * 菜品的批量删除
      * @param ids
      */
-    @Override
     @Transient
     public void delete(List<Long> ids) {
         //判断当前菜品是否能删除
@@ -118,4 +120,22 @@ public class DishServiceImpl implements DishService {
         dishMapper.deleteByIds(ids);
         dishFlavorMapper.deleteByDishIds(ids);
     }
+
+    /**
+     * 根据Id查询菜品
+     * @param id
+     * @return
+     */
+    public DishVO getByIdWithFlavor(long id) {
+        //id查询菜品数据
+        Dish dish = dishMapper.getById(id);
+        //菜品id查询口味数据
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);
+        //查询到的结果封装到dishvo
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish,dishVO);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
+    }
+
 }

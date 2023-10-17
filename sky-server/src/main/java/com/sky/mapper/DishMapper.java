@@ -36,7 +36,7 @@ public interface DishMapper {
      */
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
-    void update(Dish dish);
+
 
     /**
      * 根据主键查菜品
@@ -58,4 +58,11 @@ public interface DishMapper {
      * @param ids
      */
     void deleteByIds(List<Long> ids);
+
+    /**
+     * 根据ID动态修改菜品数据
+     * @param dish
+     */
+    @AutoFile(value = OperationType.UPDATE)
+    void update(Dish dish);
 }

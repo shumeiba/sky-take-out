@@ -43,6 +43,6 @@
             <if test="updateUser != null">update_user = #{updateUser},</if>
         </set>
         where id = #{id}
-    </update>1
+    </update>
 
 </mapper>

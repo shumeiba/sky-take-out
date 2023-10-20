@@ -38,6 +38,6 @@ public class CommonController {
             //文件上传失败
             log.error(MessageConstant.UPLOAD_FAILED);
         }
-        return null;
+        return Result.success();
     }
 }

@@ -1,6 +1,6 @@
 package com.sky.aspect;
 
-import com.sky.annotation.AutoFile;
+import com.sky.annotation.AutoFill;
 import com.sky.constant.AutoFillConstant;
 import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public class AutoFileAspect {
     //切入点
     @Pointcut("execution(* com.sky.mapper.*.*(..))" +
-            " && @annotation(com.sky.annotation.AutoFile)")
+            " && @annotation(com.sky.annotation.AutoFill)")
     public void autoFilePointCut(){
 
     }
@@ -34,7 +34,7 @@ public class AutoFileAspect {
         log.info("开始进行公共字段填充.。");
         //获取到当前被拦截的方法上的数据库操作类型
          MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        AutoFile autoFile = signature.getMethod().getAnnotation(AutoFile.class);
+        AutoFill autoFile = signature.getMethod().getAnnotation(AutoFill.class);
         OperationType operationType = autoFile.value();//获得数据库的操作类型
 
         //获取到当前被拦截的方法的参数--实体对象

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoFile {
+public @interface AutoFill {
     //数据操作类型，inert update
     OperationType value();
 }

@@ -112,7 +112,7 @@ public class DishServiceImpl implements DishService {
            }
         }
         //判断是否被套餐关联
-        List<Long> selmealIdByDishIds = setmealDishMapper.getSelmealIdByDishIds(ids);
+        List<Long> selmealIdByDishIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
         if (selmealIdByDishIds != null && selmealIdByDishIds.size() >0){
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
@@ -185,7 +185,7 @@ public class DishServiceImpl implements DishService {
             List<Long> dishIds = new ArrayList<>();
             dishIds.add(id);
             // select setmeal_id from setmeal_dish where dish_id in (?,?,?)
-            List<Long> setmealIds = setmealDishMapper.getSelmealIdByDishIds(dishIds);
+            List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(dishIds);
             if (setmealIds != null && setmealIds.size() > 0) {
                 for (Long setmealId : setmealIds) {
                     Setmeal setmeal = Setmeal.builder()
@@ -196,5 +196,18 @@ public class DishServiceImpl implements DishService {
                 }
             }
         }
+    }
+    /**
+     * 根据分类id查询菜品
+     *
+     * @param categoryId
+     * @return
+     */
+    public List<Dish> list(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        return dishMapper.list(dish);
     }
 }

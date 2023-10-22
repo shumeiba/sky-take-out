@@ -28,4 +28,5 @@
             (#{sc.name},#{sc.image},#{sc.userId},#{sc.dishId},#{sc.setmealId},#{sc.dishFlavor},#{sc.number},#{sc.amount},#{sc.createTime})
         </foreach>
     </insert>
+
 </mapper>

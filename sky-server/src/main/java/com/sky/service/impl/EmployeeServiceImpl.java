@@ -94,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         //开始分页查询
-
+        //PageHelper分页插件。PageHelper插件会在MyBatis执行查询之前自动拼接LIMIT子句，以实现分页功能。
         PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
         //这里没有明细传参，但是点进去原码可以发现调用了ThreadLocal吧page放入了内存，
         //然后我们使用pageQuery会动态拼接limit sql语句

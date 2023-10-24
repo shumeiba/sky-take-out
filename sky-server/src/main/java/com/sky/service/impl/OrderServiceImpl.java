@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
         //使用百度mapapi检查收获地址是否超出范围
-        checkOutOfRange(addressBook.getCityName()+addressBook.getDistrictName()+addressBook.getDetail());
+       // checkOutOfRange(addressBook.getCityName()+addressBook.getDistrictName()+addressBook.getDetail());
         Long userId= BaseContext.getCurrentId();
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setId(userId);
@@ -325,19 +325,7 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
         orderStatisticsVO.setConfirmed(confirmed);
         orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
-        /**
-         * 以下代码只是为了验证接单提醒中支付成功后使用websocket来进行数据通信
-         */
-        //来单提醒代码使用websocket
-        //向浏览器推送type，orderId，content
-//        Orders orders = orderMapper.getById(BaseContext.getCurrentId());
-//
-//        Map map = new HashMap();
-//        map.put("type",1);//1表示来单提醒，2表示客户催单
-//        map.put("orderId",orders.getId());
-//        map.put("content","订单号:"+orders.getNumber());
-//        String json = JSON.toJSONString(map);
-//        webSocketServer.sendToAllClient(json);
+
         return orderStatisticsVO;
     }
 
@@ -556,6 +544,23 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderBusinessException("超出配送范围");
         }
     }
+    /**
+     * 客户催单
+     * @param id
+     */
+    public  void reminder(Long id) {
+        Orders orderDB = orderMapper.getById(id);
+        if (orderDB == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Map map = new HashMap<>();
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content","订单号："+orderDB.getNumber());
 
+        //通过websocketsercer向客户端浏览器推送数据
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+
+    }
 
 }

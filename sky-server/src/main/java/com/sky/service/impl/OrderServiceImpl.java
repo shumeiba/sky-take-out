@@ -22,6 +22,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Value("${sky.baidu.ak}")
     private String ak;
-
+    @Autowired
+    private WebSocketServer webSocketServer;
     /**
      * 用户下单
      * @param ordersSubmitDTO
@@ -163,6 +165,15 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        //来单提醒代码使用websocket
+        //向浏览器推送type，orderId，content
+        Map map = new HashMap();
+        map.put("type",1);//1表示来单提醒，2表示客户催单
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号:"+outTradeNo);
+        String json = JSON.toJSONString(map);
+        webSocketServer.sendToAllClient(json);
     }
 
     /**
@@ -314,6 +325,19 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
         orderStatisticsVO.setConfirmed(confirmed);
         orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
+        /**
+         * 以下代码只是为了验证接单提醒中支付成功后使用websocket来进行数据通信
+         */
+        //来单提醒代码使用websocket
+        //向浏览器推送type，orderId，content
+//        Orders orders = orderMapper.getById(BaseContext.getCurrentId());
+//
+//        Map map = new HashMap();
+//        map.put("type",1);//1表示来单提醒，2表示客户催单
+//        map.put("orderId",orders.getId());
+//        map.put("content","订单号:"+orders.getNumber());
+//        String json = JSON.toJSONString(map);
+//        webSocketServer.sendToAllClient(json);
         return orderStatisticsVO;
     }
 
